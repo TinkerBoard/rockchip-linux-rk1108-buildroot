@@ -50,7 +50,10 @@ function lunch()
 
 	CONFIG=${TARGET_OUTPUT_DIR}/.config
 	cp ${CONFIG}{,.new}
-	mv ${CONFIG}{.old,} &>/dev/null
+	if [ -f ${CONFIG}{.old} ]
+	then
+		mv ${CONFIG}{.old,} &>/dev/null
+	fi
 
 	make -C ${BUILDROOT_DIR} O="$TARGET_OUTPUT_DIR" olddefconfig &>/dev/null
 
