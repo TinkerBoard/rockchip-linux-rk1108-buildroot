@@ -1,0 +1,27 @@
+From 181e42866930dff01afc584dd6d50feb9dbb217a Mon Sep 17 00:00:00 2001
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+Date: Mon, 10 Dec 2018 19:55:18 +0800
+Subject: [PATCH 27/30] kmssink: Request window handle when showing first frame
+
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+---
+ sys/kms/gstkmssink.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/sys/kms/gstkmssink.c b/sys/kms/gstkmssink.c
+index 6b217e9b0..7e3d6b361 100755
+--- a/sys/kms/gstkmssink.c
++++ b/sys/kms/gstkmssink.c
+@@ -1550,6 +1550,9 @@ gst_kms_sink_show_frame (GstVideoSink * vsink, GstBuffer * buf)
+ 
+   res = GST_FLOW_ERROR;
+ 
++  if (!self->last_buffer)
++    gst_video_overlay_prepare_window_handle (GST_VIDEO_OVERLAY (&self->videosink));
++
+   if (buf)
+     buffer = gst_kms_sink_get_input_buffer (self, buf);
+   else if (self->last_buffer)
+-- 
+2.11.0
+
