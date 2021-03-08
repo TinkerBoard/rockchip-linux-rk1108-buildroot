@@ -5,6 +5,8 @@
 #include "audio.config"
 #include "wifi.config"
 #include "network.config"
+#include "video_mpp.config"
+#include "rk1806_webserver.config"
 BR2_TARGET_GENERIC_HOSTNAME="rk1806"
 BR2_TARGET_GENERIC_ISSUE="Welcome to RK1806 Buildroot"
 
@@ -17,3 +19,8 @@ BR2_PACKAGE_MINIGUI_SOFTWARE_SCALE=n
 BR2_PACKAGE_FICIAL_GATE=y
 # BR2_PACKAGE_CAMERA_ENGINE_RKISP_3A_SERVICE is not set
 BR2_PACKAGE_RKNPU_NOT_RUN_RKNN_SERVER=y
+
+BR2_TOOLCHAIN_GLIBC_GCONV_LIBS_COPY=y
+BR2_TOOLCHAIN_GLIBC_GCONV_LIBS_LIST="GBK"
+
+BR2_PACKAGE_RKFACIAL=y

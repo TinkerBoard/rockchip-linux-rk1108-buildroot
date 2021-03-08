@@ -23,4 +23,18 @@ config BR2_PACKAGE_RK_OEM_INSTALL_TARGET_DIR
 
 	  The default is "$(BASE_DIR)/oem"
 
+config BR2_PACKAGE_RK_OEM_ENABLE_DEBUG
+	bool "Enable OEM Target build with debug symbol"
+	default n
+	help
+	  Enable this to build target with debug symbol.
+
+config BR2_PACKAGE_RK_OEM_IMAGE_FILESYSTEM_TYPE
+	string "Rockchip OEM Image filesystem type"
+	default "ext4"
+	help
+	  Make oem.img with filesystem type. Support ext2 ext4 squashfs.
+
+	  The default is "ext4"
+
 endif

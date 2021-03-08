@@ -2,7 +2,7 @@
 
 if [ -z "${BASH_SOURCE}" ];then
 	echo Not in bash, switching to it...
-	bash -c "$0" "$@"
+	bash -c "$0 $@"
 fi
 
 function choose_board()
@@ -66,8 +66,8 @@ function lunch_rockchip()
 	make -C ${BUILDROOT_DIR} O="$TARGET_OUTPUT_DIR" olddefconfig &>/dev/null
 
 	if ! diff ${CONFIG}{,.new}; then
-		read -p "Found old config, override it? (y/n):" YES
-		[ "$YES" = "y" ] && cp ${CONFIG}{.new,}
+		read -t 10 -p "Found old config, override it? (y/n):" YES
+		[ "$YES" != "n" ] && cp ${CONFIG}{.new,}
 	fi
 }
 
@@ -88,17 +88,26 @@ function main()
 			sed "s/_defconfig$//" | grep "$1" | sort)
 	)
 
+	unset RK_BUILD_CONFIG
 	RK_DEFCONFIG_ARRAY_LEN=${#RK_DEFCONFIG_ARRAY[@]}
-	if [ $RK_DEFCONFIG_ARRAY_LEN -eq 0 ]; then
-		echo No available configs${1:+" for: $1"}
-		return
-	fi
 
-	if [ -n "$1" ]; then
-		RK_BUILD_CONFIG=${RK_DEFCONFIG_ARRAY[0]}
-	else
-		choose_board
-	fi
+	case $RK_DEFCONFIG_ARRAY_LEN in
+		0)
+			echo No available configs${1:+" for: $1"}
+			;;
+		1)
+			RK_BUILD_CONFIG=${RK_DEFCONFIG_ARRAY[0]}
+			;;
+		*)
+			if [ "$1" = ${RK_DEFCONFIG_ARRAY[0]} ]; then
+				# Prefer exact-match
+				RK_BUILD_CONFIG=$1
+			else
+				choose_board
+			fi
+			;;
+	esac
+
 	[ -n "$RK_BUILD_CONFIG" ] || return
 
 	source ${TOP_DIR}/device/rockchip/.BoardConfig.mk

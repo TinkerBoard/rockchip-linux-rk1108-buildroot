@@ -1,7 +1,7 @@
-From 0473cffdfffe16f6682206bdc11a3f93ea19adcb Mon Sep 17 00:00:00 2001
+From e5806815fc0677382566dc401f1ce0ed5a8265e7 Mon Sep 17 00:00:00 2001
 From: Richard Oehlinger <richard.oehlinger@adbsafegate.com>
 Date: Mon, 18 Mar 2019 10:15:13 +0100
-Subject: [PATCH 01/10] Fix compile failure with gstreamer 0.10
+Subject: [PATCH 01/15] Fix compile failure with gstreamer 0.10
 
 This fixes an compile failure introduced in commit 67c4ec55.
 
@@ -35,5 +35,5 @@ index bd402fb..ab20638 100644
                  m_renderer->setVideoSink(child);
                  break;
 -- 
-2.7.4
+2.20.1
 

@@ -1,38 +1,45 @@
-From 8ab08c0236812cfead2838f2dfbded8bd8517033 Mon Sep 17 00:00:00 2001
+From bc38b6217cc5f4306d6d41561e3dc589a5ddcb7b Mon Sep 17 00:00:00 2001
 From: Jeffy Chen <jeffy.chen@rock-chips.com>
 Date: Mon, 3 Dec 2018 10:40:16 +0800
-Subject: [PATCH 10/25] compositor: Support freezing display
+Subject: [PATCH 10/38] compositor: Support freezing display
 
 Freeze display when the specified file(from env "WESTON_FREEZE_DISPLAY")
 exists.
 
+For example:
+export WESTON_FREEZE_DISPLAY=/tmp/.freeze
+touch $WESTON_FREEZE_DISPLAY
+weston --tty=2 -Bdrm-backend.so&
+
 Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 ---
- libweston/compositor.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ libweston/compositor.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/libweston/compositor.c b/libweston/compositor.c
-index 9ee5c70..8feb05c 100644
+index 2323c3e..b29a9db 100644
 --- a/libweston/compositor.c
 +++ b/libweston/compositor.c
-@@ -2435,6 +2435,9 @@ output_repaint_timer_handler(void *data)
+@@ -2853,6 +2853,11 @@ output_repaint_timer_handler(void *data)
  	void *repaint_data = NULL;
- 	int ret;
+ 	int ret = 0;
  
-+	if (!access(getenv("WESTON_FREEZE_DISPLAY"), F_OK))
++	if (!access(getenv("WESTON_FREEZE_DISPLAY"), F_OK)) {
++		usleep(compositor->repaint_msec);
 +		goto out;
++	}
 +
  	weston_compositor_read_presentation_clock(compositor, &now);
  
  	if (compositor->backend->repaint_begin)
-@@ -2456,6 +2459,7 @@ output_repaint_timer_handler(void *data)
- 						        repaint_data);
- 	}
+@@ -2884,6 +2889,7 @@ output_repaint_timer_handler(void *data)
+ 	wl_list_for_each(output, &compositor->output_list, link)
+ 		output->repainted = false;
  
 +out:
  	output_repaint_timer_arm(compositor);
  
  	return 0;
 -- 
-2.11.0
+2.20.1
 

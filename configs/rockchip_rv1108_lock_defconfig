@@ -1,10 +1,8 @@
 #include "rv1108_arm.config"
 #include "rv1108_base.config"
 #include "rv1108_lock.config"
-#include "rv1108_face_service.config"
-#include "rv1108_system_manager.config"
 #include "network.config"
-#include "adbd.config"
+BR2_PACKAGE_BUSYBOX_CONFIG="board/rockchip/common/tinyrootfs/busybox.config"
 BR2_PACKAGE_DROPBEAR=n
 BR2_PACKAGE_ADK_MEDIA=y
 BR2_PACKAGE_ADK_MEDIA_WAV_PLAYBACK=y
