@@ -3,17 +3,24 @@ menuconfig BR2_PACKAGE_RKMEDIA
 
 if BR2_PACKAGE_RKMEDIA
 
-config BR2_PACKAGE_RKMEDIA_SANITIZER_DYNAMIC
-	bool "enable rkmedia sanitizer tools with dynamic linker"
-	select BR2_PACKAGE_ADDRESS_SANITIZER
-	help
-	  Enable rkmedia debug on sanitizer with dynamic linker.
+config BR2_PACKAGE_RKMEDIA_V4L2_CAPTURE
+    bool "camera capture"
+    help
+      wrapped function of v4l2 capture
 
-config BR2_PACKAGE_RKMEDIA_SANITIZER_STATIC
-	bool "enable rkmedia sanitizer tools with static linker"
-	select BR2_PACKAGE_ADDRESS_SANITIZER
-	help
-	  Enable rkmedia debug on sanitizer with static linker.
+if BR2_PACKAGE_RKMEDIA_V4L2_CAPTURE
+config BR2_PACKAGE_RKMEDIA_USE_AIQ
+    bool "camera capture with rkaiq api"
+	select BR2_PACKAGE_CAMERA_ENGINE_RKAIQ
+    help
+      camera capture with rkaiq api
+endif #BR2_PACKAGE_RKMEDIA_V4L2_CAPTURE
+
+config BR2_PACKAGE_DRM_DISPLAY_OUTPUT
+    bool "drm output"
+    select BR2_PACKAGE_LIBDRM
+    help
+      wrapped function of drm output
 
 config BR2_PACKAGE_RKMEDIA_MPP
     bool "rk mpp wrapper"
@@ -22,59 +29,26 @@ config BR2_PACKAGE_RKMEDIA_MPP
       wrapped function of rk mpp
 
 if BR2_PACKAGE_RKMEDIA_MPP
-
 config BR2_PACKAGE_RKMEDIA_MPP_ENCODER
     bool "rk mpp encoder"
     default y
     help
       wrapped function of rk mpp encoder
 
-if BR2_PACKAGE_RKMEDIA_MPP_ENCODER
-config BR2_PACKAGE_RKMEDIA_MPP_ENCODER_OSD
-    bool "rk mpp encoder osd"
-    default n
-    help
-     enable encoder osd function
-
-endif #BR2_PACKAGE_RKMEDIA_MPP_ENCODER
-
 config BR2_PACKAGE_RKMEDIA_MPP_DECODER
     bool "rk mpp decoder"
     default y
     help
       wrapped function of rk mpp decoder
-
 endif # BR2_PACKAGE_RKMEDIA_MPP
 
-config BR2_PACKAGE_RKMEDIA_OGG
-    bool "ogg"
-    select BR2_PACKAGE_LIBVORBIS
+config BR2_PACKAGE_RKMEDIA_ALSA
+    bool "audio capture and palyback"
+    select BR2_PACKAGE_ALSA_LIB
     help
-      wrapped function of ogg vorbis
+      wrapped function of alsa
 
-if BR2_PACKAGE_RKMEDIA_OGG
-
-config BR2_PACKAGE_RKMEDIA_OGGVORBIS_DEMUXER
-    bool "ogg vorbis demuxer_decode"
-    default y
-    help
-      wrapped function of libvorbisfile
-
-config BR2_PACKAGE_RKMEDIA_OGGVORBIS_MUXER
-    bool "ogg vorbis encode_muxer"
-    help
-      wrapped function of libvorbisenc
-
-endif # BR2_PACKAGE_RKMEDIA_OGG
-
-config BR2_PACKAGE_RKMEDIA_FFMPEG
-    bool "ffmpeg"
-    depends on BR2_PACKAGE_FFMPEG
-    help
-      wrapped function of ffmpeg
-
-if BR2_PACKAGE_ALSA_LIB
-
+if BR2_PACKAGE_RKMEDIA_ALSA
 config BR2_PACKAGE_RKMEDIA_ALSA_PLAYBACK
     bool "alsa playback"
     help
@@ -85,18 +59,34 @@ config BR2_PACKAGE_RKMEDIA_ALSA_CAPTURE
     help
       wrapped function of alsa capture
 
-endif # BR2_PACKAGE_ALSA_LIB
-
-config BR2_PACKAGE_RKMEDIA_V4L2_CAPTURE
-    bool "camera capture"
+config BR2_PACKAGE_RKMEDIA_AUDIO_ALGORITHM
+    bool "audio algorithm"
+    depends on BR2_PACKAGE_RKMEDIA_ALSA_PLAYBACK || BR2_PACKAGE_RKMEDIA_ALSA_CAPTURE
+    select BR2_PACKAGE_COMMON_ALGORITHM
+    select BR2_PACKAGE_COMMON_ALGORITHM_ANR
+    select BR2_PACKAGE_COMMON_ALGORITHM_AEC_ANR_AGC
+    default n
     help
-      wrapped function of v4l2 capture
+      audio algorithm(3A and ANR) switch
+endif # BR2_PACKAGE_RKMEDIA_ALSA
 
-config BR2_PACKAGE_RKMEDIA_RKGUARD
-    bool "rkguard"
-    default y
+config BR2_PACKAGE_RKMEDIA_AUDIO_CODEC
+    bool "audio encoder and decoder"
+    select BR2_PACKAGE_FFMPEG
     help
-      wrapped function of through guard
+      wrapped function of ffmpeg audio codec
+
+if BR2_PACKAGE_RKMEDIA_AUDIO_CODEC
+config BR2_PACKAGE_RKMEDIA_AUDIO_ENCODER
+    bool "audio encoder"
+    help
+      wrapped function of ffmpeg audio encoder
+
+config BR2_PACKAGE_RKMEDIA_AUDIO_DECODER
+    bool "audio decoder"
+    help
+      wrapped function of ffmpeg audio decoder
+endif #BR2_PACKAGE_RKMEDIA_AUDIO_CODEC
 
 config BR2_PACKAGE_RKMEDIA_RKRGA
     bool "rkrga"
@@ -107,6 +97,7 @@ config BR2_PACKAGE_RKMEDIA_RKRGA
 config BR2_PACKAGE_RKMEDIA_RKNN
     bool "rknn"
     select BR2_PACKAGE_RKNPU
+    select BR2_PACKAGE_RKNPU_USE_RKNN_API
     help
       wrapped function of rknn
 
@@ -136,41 +127,6 @@ config BR2_PACKAGE_RKMEDIA_ROCKX
     help
       wrapped function of rockx
 
-config BR2_PACKAGE_DRM_DISPLAY_OUTPUT
-    bool "drm output"
-    select BR2_PACKAGE_LIBDRM
-    help
-      wrapped function of drm output
-
-config BR2_PACKAGE_RKMEDIA_LIVE555
-    bool "live555"
-    select BR2_PACKAGE_LIVE555
-    help
-      live555 is an rtsp server and client
-
-if BR2_PACKAGE_RKMEDIA_LIVE555
-
-config BR2_PACKAGE_RKMEDIA_RTSP_SERVER
-    bool "rtsp server"
-    help
-      live555 rtsp server
-
-if BR2_PACKAGE_RKMEDIA_RTSP_SERVER
-
-config BR2_PACKAGE_RKMEDIA_RTSP_SERVER_H264
-    bool "rtsp server h264 session"
-    help
-      live555 rtsp server h264 session
-
-config BR2_PACKAGE_RKMEDIA_RTSP_SERVER_H265
-    bool "rtsp server h265 session"
-    help
-      live555 rtsp server h265 session
-
-endif # BR2_PACKAGE_RKMEDIA_RTSP_SERVER
-
-endif # BR2_PACKAGE_RKMEDIA_LIVE555
-
 config BR2_PACKAGE_RKMEDIA_MOVE_DETECTION
     bool "rk movedetection wrapper"
     select BR2_PACKAGE_COMMON_ALGORITHM
@@ -185,35 +141,62 @@ config BR2_PACKAGE_RKMEDIA_OCCLUSION_DETECTION
     help
       wrapped function of rk occlusion detection algorithm
 
-config BR2_PACKAGE_RKMEDIA_ANR
-    bool "audio automatic noise reduction algorithm"
-    select BR2_PACKAGE_COMMON_ALGORITHM
-    select BR2_PACKAGE_COMMON_ALGORITHM_ANR
-    help
-      wrapped function of automatic noise reduction algorithm
-
-config BR2_PACKAGE_RKMEDIA_AEC
-    bool "audio echo cancellation algorithm"
-    select BR2_PACKAGE_COMMON_ALGORITHM
-    select BR2_PACKAGE_COMMON_ALGORITHM_AEC_ANR_AGC
-    help
-      wrapped function of echo cancellation algorithm
-
-config BR2_PACKAGE_RKMEDIA_MINILOGGER
-    bool "Output log by minilogger"
-    select BR2_PACKAGE_MINILOGGER
-    help
-      Output log by minilogger interface
 
 config BR2_PACKAGE_RKMEDIA_EXAMPLES
     bool "enable rkmedia examples"
     help
       provide examples to show the usage of rkmedia
 
-config BR2_PACKAGE_RKMEDIA_UVC
-    bool "rk uvc enable"
-    depends on BR2_PACKAGE_UVC_APP
+config BR2_PACKAGE_RKMEDIA_DEBUG_UTILS
+    bool "utils for debug rkmedia"
+	default n
     help
-      enable uvc function
+      compile with sanitizer or selsct minilogger
+
+if BR2_PACKAGE_RKMEDIA_DEBUG_UTILS
+config BR2_PACKAGE_RKMEDIA_SANITIZER_DYNAMIC
+	bool "enable rkmedia sanitizer tools with dynamic linker"
+	select BR2_PACKAGE_ADDRESS_SANITIZER
+	help
+	  Enable rkmedia debug on sanitizer with dynamic linker.
+
+config BR2_PACKAGE_RKMEDIA_SANITIZER_STATIC
+	bool "enable rkmedia sanitizer tools with static linker"
+	select BR2_PACKAGE_ADDRESS_SANITIZER
+	help
+	  Enable rkmedia debug on sanitizer with static linker.
+
+config BR2_PACKAGE_RKMEDIA_MINILOGGER
+    bool "Output log by minilogger"
+    select BR2_PACKAGE_MINILOGGER
+    help
+      Output log by minilogger interface
+endif #BR2_PACKAGE_RKMEDIA_DEBUG_UTILS
+
+config BR2_PACKAGE_RKMEDIA_LIVE555
+    bool "live555"
+    select BR2_PACKAGE_LIVE555
+    help
+      live555 is an rtsp server and client
+
+if BR2_PACKAGE_RKMEDIA_LIVE555
+config BR2_PACKAGE_RKMEDIA_RTSP_SERVER
+    bool "rtsp server"
+    help
+      live555 rtsp server
+
+if BR2_PACKAGE_RKMEDIA_RTSP_SERVER
+config BR2_PACKAGE_RKMEDIA_RTSP_SERVER_H264
+    bool "rtsp server h264 session"
+    help
+      live555 rtsp server h264 session
+
+config BR2_PACKAGE_RKMEDIA_RTSP_SERVER_H265
+    bool "rtsp server h265 session"
+    help
+      live555 rtsp server h265 session
+
+endif # BR2_PACKAGE_RKMEDIA_RTSP_SERVER
+endif # BR2_PACKAGE_RKMEDIA_LIVE555
 
 endif # BR2_PACKAGE_RKMEDIA
